@@ -21,6 +21,6 @@ router.get('/settings', function(req, res, next) {
   });
 });
 
-router.post('/save', mailSettingController.updateMailSettings);
+router.post('/settings/update', mailSettingController.updateMailSettings);
 
 module.exports = router;

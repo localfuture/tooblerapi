@@ -25,27 +25,28 @@ exports.saveMailSettings = (req,res) => {
 }
 
 exports.updateMailSettings = (req,res) => {
-    console.log(req.body);
-    // const mailSettings = new MailSetting({
-    //     _id: req.body.id,
-    //     totalMessageCount: req.body.totalMessageCount,
-    //     sentMessageCount: req.body.sentMessageCount,
-    //     recipientCount: 0
-    // });
+    console.log(req.body.id, req.body.totalMessageCount);
+    const updateMail = new MailSetting({
+        _id: req.body.id,
+        totalMessageCount: req.body.totalMessageCount,
+        sentMessageCount: req.body.sentMessageCount,
+        recipientCount: 0
+    });
 
-    // MailSetting.updateOne({_id: req.body.id}, mailSettings)
-    // .then(createdMessage => {
-    //     res.status(201).json({
-    //         message: "Mail Setting updated successfully",
-    //         menu: {
-    //             ...createdMessage,
-    //             id: createdMessage._id
-    //         }
-    //     });
-    // })
-    // .catch(error => {
-    //     res.status(500).json({
-    //         message: "Updating a Mail Setting failed!"
-    //     });
-    // });
+    MailSetting.updateOne({_id: req.body.id}, updateMail)
+    .then(createdMessage => {
+        res.status(201).json({
+            message: "Mail Setting updated successfully",
+            menu: {
+                ...createdMessage,
+                id: createdMessage._id
+            }
+        });
+        //res.redirect('/');
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: "Updating a Mail Setting failed!"
+        });
+    });
 }
