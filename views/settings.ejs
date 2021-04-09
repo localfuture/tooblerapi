@@ -20,14 +20,15 @@
     <div class="container col-sm-6 mt-5">
       <div class="card border-primary" style="box-shadow: 0 1px 6px 0 rgba(32, 33, 36, .28); border-radius: 20px;">
         <div class="card-body m-3">
-          <form action="/message/update" method="POST" id="create">
+          <form action="/settings/update" method="POST" id="create">
+            <input type="hidden" class="form-control" name="id" value="<%= data._id %>" required>
             <div class="mb-3">
                 <label for="totalMessageCount" class="form-label">Total Message Count</label>
-                <input type="number" class="form-control" name="totalMessageCount" required>
+                <input type="number" class="form-control" name="totalMessageCount" value="<%= data.totalMessageCount %>" required>
             </div>
             <div class="mb-3">
                 <label for="sendMessageCount" class="form-label">Send Message Count</label>
-                <input type="number" class="form-control" name="sendMessageCount" required>
+                <input type="number" class="form-control" name="sendMessageCount"  value="<%= data.sentMessageCount %>" required>
             </div>
             <button type="submit" class="btn btn-primary" style="float: right;">Submit</button>
         </form>
