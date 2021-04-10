@@ -10,12 +10,9 @@ var recipientsController = require('../controllers/recipients');
 router.get('/', function (req, res, next) {
   MailSetting.findOne()
     .then(mail => {
-      return mail;
-    })
-    .then(mailSettings => {
       Recipients.find()
         .then(recipients => {
-          res.render('home', { mailSettings: mailSettings, recipients: recipients });
+          res.render('home', { mailSettings: mail, recipients: recipients });
         });
     })
     .catch(error => {
