@@ -17,7 +17,8 @@ router.get('/', function (req, res, next) {
     })
     .catch(error => {
       res.status(500).json({
-        message: "Fetching failed!!!"
+        message: "Fetching failed!!!",
+        error: error
       });
     });
 
