@@ -13,25 +13,18 @@ var mailSettingRouter = require('./routes/mailSettings');
 var app = express();
 
 //DataBase Connection//
-(async () => {
-  try {
-    await mongoose.connect(process.env.DB_API, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true
-    })
-      .then(() => {
-        console.log("Connected to DataBase");
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log("Connection Failed!!!");
-      });
-    //await algo.logic();
-  } catch (err) {
-    console.log('error: ' + err)
-  }
-})()
+mongoose.connect(process.env.DB_API, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+})
+  .then(() => {
+    console.log("Connected to DataBase");
+  })
+  .catch((error) => {
+    console.log(error);
+    console.log("Connection Failed!!!");
+  });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
