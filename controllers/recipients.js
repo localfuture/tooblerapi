@@ -1,92 +1,108 @@
-const Message = require('../models/message')
-const Recipient = require('../models/recipient');
+const MailSettings = require('../models/mailSettings');
+const Recipients = require('../models/recipients');
 
-var algo = require('../alogrithm/logic');
+exports.sendMessage = (req, res) => {
+    // total message to be send
+    var total = req.query.total;
+    console.log('total: ' + total);
 
-exports.getRecipient = (req, res) => {
-    //algo.logic();
-    res.render('recipient');
-}
+    // percentage of one mail
+    var oneMailPercentage = 100 / total;
+    console.log('one mail: ' + oneMailPercentage);
 
-exports.messageDetails = (req, res) => {
-    Message.findOne()
-    .then(message => {
-        if (message) {
-            res.status(200).json(message);
-        } else {
-            res.status(404).json({ message: "message not found!" });
-        }
-    })
-    .catch(error => {
-        res.status(500).json({
-            message: "Fetching message failed!"
-        });
-    });
-}
+    Recipients.find()
+        .then(data => {
+            var recipientList = [];
+            if (data.length > 0) {
+                data.forEach(recipient => {
+                    recipient.currentPercentage = recipient.receviedMessageCount * oneMailPercentage;
+                    recipient.percentageDifference = recipient.currentPercentage - recipient.actualPercentage;
+                    recipientList.push({
+                        _id: recipient._id,
+                        recipientName: recipient.recipientName,
+                        actualPercentage: recipient.actualPercentage,
+                        currentPercentage: recipient.currentPercentage,
+                        percentageDifference: recipient.percentageDifference,
+                        receviedMessageCount: recipient.receviedMessageCount
+                    });
+                });
+            }
 
-exports.storeRecipients = (req,res) => {
-    const recipient = new Recipient({
-        recipientName: req.body.recipientName,
-        actualPercentage: req.body.actualPercentage,
-        currentPercentage: req.body.actualPercentage,
-        totalMessageCount: 0,
-        receviedMessageCount: 0,
-        balanceMessageCount: 0
-    });
+            return recipientList;
+        })
+        .then(recipientList => {
+            if (recipientList.length > 0) {
+                recipientList.forEach((data, index) => {
+                    const updateData = new Recipients(data);
+                    Recipients.updateOne({ _id: data._id }, updateData)
+                        .then(updatedData => {
+                            console.log('updated');
+                            if (index == recipientList.length - 1) {
+                                console.log('update completed');
+                                Recipients.findOne().sort({ percentageDifference: 1 })
+                                    .then(recipient => {
+                                        console.log(recipient, oneMailPercentage);
+                                        // MailSettings.findOne()
+                                        // .then(data => {
+                                        //     data.sentMessageCount = data.sentMessageCount + 1;
+                                        //     const updateMailSetting = new MailSettings(data);
+                                        //     MailSettings.updateOne({_id: data._id}, data)
+                                        //     .then(success => {
+                                        //         console.log('mail settings updated');
+                                        //     })
+                                        //     .catch(err => {
+                                        //         console.log('erorr in updating mail settings');
+                                        //     });
+                                        // })
+                                        // .catch(err => {
+                                        //     console.log('error in fetching mail settings');
+                                        // });
 
-    recipient.save()
-    .then(createdrecipient => {
-        res.status(201).json({
-            message: "Recipient added successfully",
-            menu: {
-                ...createdrecipient,
-                id: createdrecipient._id
+                                        recipient.receviedMessageCount++;
+                                        recipient.currentPercentage = recipient.receviedMessageCount * oneMailPercentage;
+                                        recipient.percentageDifference = recipient.currentPercentage - recipient.actualPercentage;
+                                        const updatedRecipient = new Recipients(recipient);
+
+                                        Recipients.updateOne({ _id: recipient._id }, updatedRecipient)
+                                            .then(updatedRecipient => {
+                                                console.log('updated Recipient');
+                                                MailSettings.findOne()
+                                                    .then(data => {
+                                                        data.sentMessageCount = data.sentMessageCount + 1;
+                                                        const updateMailSetting = new MailSettings(data);
+                                                        MailSettings.updateOne({ _id: data._id }, data)
+                                                            .then(success => {
+                                                                console.log('mail settings updated');
+                                                                res.status(201).json({
+                                                                    message: "Updated Recipient",
+                                                                    success: true
+                                                                });
+                                                            })
+                                                            .catch(err => {
+                                                                console.log('erorr in updating mail settings');
+                                                                res.status(500).json({
+                                                                    message: "Failed to send",
+                                                                    success: false
+                                                                });
+                                                            });
+                                                    })
+                                                    .catch(err => {
+                                                        console.log('error in fetching mail settings');
+                                                    });
+                                            })
+                                            .catch(error => {
+                                                res.status(500).json({
+                                                    message: "Failed to send",
+                                                    success: false
+                                                });
+                                            });
+                                    });
+                            }
+                        })
+                        .catch(err => {
+                            console.log('error during updation');
+                        })
+                });
             }
         });
-    })
-    .catch(error => {
-        res.status(500).json({
-            message: "Creating a recipient failed!"
-        });
-    });
-}
-
-exports.recipientDetails = (req,res) => {
-    Recipient.find()
-    .then(message => {
-        if (message) {
-            res.status(200).json(message);
-        } else {
-            res.status(404).json({ message: "message not found!" });
-        }
-    })
-    .catch(error => {
-        res.status(500).json({
-            message: "Fetching message failed!"
-        });
-    });
-}
-
-exports.singleUpdate = (req,res) => {
-   Recipient.findById(req.params.id).then(data => {
-       res.render('recipientform', {data: data});
-   })
-}
-
-exports.update = (req,res) => {
-    const recipient = new Recipient({
-        _id: req.body.id,
-        recipientName: req.body.recipientName,
-        actualPercentage: req.body.actualPercentage,
-        currentPercentage: req.body.actualPercentage,
-        totalMessageCount: 0,
-        receviedMessageCount: 0,
-        balanceMessageCount: 0
-    });
-
-    Recipient.updateOne({_id: req.body.id}, recipient)
-    .then(data => {
-        console.log(data);
-        res.redirect('/recipient');
-    })
 }

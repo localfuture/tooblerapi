@@ -25,7 +25,6 @@ exports.saveMailSettings = (req,res) => {
 }
 
 exports.updateMailSettings = (req,res) => {
-    console.log(req.body.id, req.body.totalMessageCount);
     const updateMail = new MailSetting({
         _id: req.body.id,
         totalMessageCount: req.body.totalMessageCount,
@@ -35,14 +34,7 @@ exports.updateMailSettings = (req,res) => {
 
     MailSetting.updateOne({_id: req.body.id}, updateMail)
     .then(createdMessage => {
-        res.status(201).json({
-            message: "Mail Setting updated successfully",
-            menu: {
-                ...createdMessage,
-                id: createdMessage._id
-            }
-        });
-        //res.redirect('/');
+        res.redirect('/');
     })
     .catch(error => {
         res.status(500).json({

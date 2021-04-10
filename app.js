@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require("mongoose");
+var $ = require('jquery');
 
 var homeRouter = require('./routes/home');
 var mailSettingRouter = require('./routes/mailSettings');
