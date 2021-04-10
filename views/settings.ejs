@@ -24,13 +24,11 @@
             <input type="hidden" class="form-control" name="id" value="<%= data._id %>" required>
             <div class="mb-3">
                 <label for="totalMessageCount" class="form-label">Total Message Count</label>
-                <input type="number" class="form-control" name="totalMessageCount" value="<%= data.totalMessageCount %>" required>
-                <!-- <input type="number" class="form-control" name="totalMessageCount" value="<%= data.totalMessageCount %>" min="<%= data.totalMessageCount %>" required> -->
+                <input type="number" class="form-control" name="totalMessageCount" value="<%= data.totalMessageCount %>" min="<%= data.totalMessageCount %>" required>
             </div>
             <div class="mb-3">
                 <label for="sentMessageCount" class="form-label">Send Message Count</label>
-                <input type="number" class="form-control" name="sentMessageCount"  value="<%= data.sentMessageCount %>" required>
-                <!-- <input type="number" class="form-control" name="sentMessageCount"  value="<%= data.sentMessageCount %>" max="<%= data.totalMessageCount %>" required> -->
+                <input type="number" class="form-control" name="sentMessageCount"  value="<%= data.sentMessageCount %>"  min="<%= data.sentMessageCount %>" max="<%= data.totalMessageCount %>" disabled required>
             </div>
             <button type="submit" class="btn btn-primary" style="float: right;">Submit</button>
         </form>
