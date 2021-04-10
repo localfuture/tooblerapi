@@ -13,7 +13,7 @@ var mailSettingRouter = require('./routes/mailSettings');
 var app = express();
 
 //DataBase Connection//
-mongoose.connect(process.env.DB_API, {
+mongoose.connect('mongodb://anand:unicornb1331@cluster0-shard-00-00-0tquo.mongodb.net:27017,cluster0-shard-00-01-0tquo.mongodb.net:27017,cluster0-shard-00-02-0tquo.mongodb.net:27017/mails?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true
